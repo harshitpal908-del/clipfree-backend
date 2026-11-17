@@ -1,0 +1,8 @@
+fastapi
+uvicorn
+yt-dlp
+faster-whisper
+opencv-python-headless
+mediapipe
+google-genai
+pydanticDockerfile
