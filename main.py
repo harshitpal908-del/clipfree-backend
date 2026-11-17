@@ -1,3 +1,31 @@
+import os
+from fastapi import FastAPI, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
+from pydantic import BaseModel
+from google import genai
+
+# FastAPI app initialization (Yeh zaroori hai taaki Render 'app' attribute dhund sake)
+app = FastAPI(title="ClipFree AI Backend")
+
+# CORS Setup
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+# Initialize Google Gemini client
+AI_API_KEY = os.environ.get("GEMINI_API_KEY", "dummy_key")
+ai_client = genai.Client(api_key=AI_API_KEY)
+
+class ClipRequest(BaseModel):
+    youtube_url: str
+    aspect_ratio: str = "9:16"
+    caption_lang: str = "hi"
+    style_id: str = "ms-1"
+
 def generate_ass_subtitles(segments, ass_path: str, lang: str, style_id: str):
     """Basic, Glowing aur Floating .ass subtitles generator for Mastersoft, CapCut & VN Editor styles"""
     
@@ -51,3 +79,21 @@ Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
 
     with open(ass_path, "w", encoding="utf-8") as f:
         f.write("\n".join(lines))
+
+@app.post("/api/clip")
+def create_clips(req: ClipRequest):
+    # Mocking response for testing integration
+    return {
+        "clips": [
+            {
+                "title": "Viral Podcast Moment #1",
+                "score": "9.8/10",
+                "time": "00:15 - 00:45",
+                "download_url": "https://www.w3schools.com/html/mov_bbb.mp4"
+            }
+        ]
+    }
+
+@app.get("/")
+def root():
+    return {"status": "ClipFree AI Backend is running successfully 🚀"}
