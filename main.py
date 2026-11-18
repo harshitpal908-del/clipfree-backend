@@ -6,7 +6,7 @@ from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 import yt_dlp
 
-app = FastAPI(title="ClipFree AI Real YouTube Clipper")
+app = FastAPI(title="ClipFree AI Final Fix")
 
 app.add_middleware(
     CORSMiddleware,
@@ -30,9 +30,9 @@ def create_clips(req: ClipRequest):
     try:
         input_file = "input_video.mp4"
         
-        # Extract YouTube video stream directly using yt_dlp
+        # FIX: Format ko 'best' kar diya hai taaki koi format error na aaye
         ydl_opts = {
-            'format': 'best[height<=360]',
+            'format': 'best',
             'outtmpl': input_file,
             'noplaylist': True,
             'socket_timeout': 30
@@ -43,10 +43,9 @@ def create_clips(req: ClipRequest):
             video_title = info.get('title', 'YouTube Short')
 
         rendered_clips = []
-        # Cut 3 real segments from the downloaded YouTube video
         for i in range(1, 4):
             output_clip_path = f"static/clip_{i}.mp4"
-            start_time = i * 15 # 15s, 30s, 45s marks
+            start_time = i * 15
             
             filter_complex = "[0:v]scale=360:640:force_original_aspect_ratio=increase,crop=360:640[v]"
             cmd = [
